@@ -1,0 +1,91 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "queryframe"
+version = "0.1.0"
+description = "Super fast natural language data visualization and analysis for pandas DataFrames"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Movar Group" },
+]
+keywords = ["pandas", "dataframe", "natural-language", "visualization", "llm", "ai"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "pandas>=1.5",
+    "jinja2>=3.1",
+    "xxhash>=3.0",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.0"]
+anthropic = ["anthropic>=0.30"]
+gemini = ["google-genai>=1.0"]
+ollama = ["httpx>=0.27"]
+lmstudio = ["openai>=1.0"]
+plotly = ["plotly>=5.0"]
+matplotlib = ["matplotlib>=3.5", "seaborn>=0.12"]
+altair = ["altair>=5.0"]
+all = [
+    "openai>=1.0",
+    "anthropic>=0.30",
+    "google-genai>=1.0",
+    "httpx>=0.27",
+    "plotly>=5.0",
+    "matplotlib>=3.5",
+    "seaborn>=0.12",
+    "altair>=5.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-asyncio>=0.21",
+    "ruff>=0.4",
+    "mypy>=1.8",
+    "pandas-stubs>=2.0",
+    "pre-commit>=3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/movar-group/queryframe"
+Documentation = "https://github.com/movar-group/queryframe#readme"
+Repository = "https://github.com/movar-group/queryframe"
+Issues = "https://github.com/movar-group/queryframe/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/queryframe"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "TCH"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=queryframe --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["src/queryframe"]
