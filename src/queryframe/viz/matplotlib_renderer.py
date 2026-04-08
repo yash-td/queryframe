@@ -157,7 +157,9 @@ class MatplotlibRenderer:
                 labels = df[x_col].astype(str) if x_col else df.index.astype(str)
                 pie_colors = colors[:len(df)]
                 autopct = "%1.1f%%" if cs.show_labels else None
-                ax.pie(df[col], labels=labels, colors=pie_colors, autopct=autopct, alpha=alpha)
+                wedge_props = {"alpha": alpha} if alpha < 1.0 else {}
+                ax.pie(df[col], labels=labels, colors=pie_colors, autopct=autopct,
+                       wedgeprops=wedge_props)
             case ChartType.HISTOGRAM:
                 col = x_col or y_col or df.columns[0]
                 ax.hist(df[col].dropna(), bins=30, color=colors[0], edgecolor="white", alpha=alpha)
