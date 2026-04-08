@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import time
 from typing import Any
 
@@ -49,8 +50,19 @@ class QueryEngine:
                 )
             else:
                 kwargs: dict[str, Any] = {}
-                if self._config.api_key:
-                    kwargs["api_key"] = self._config.api_key
+                # Resolve API key: config > env var
+                api_key = self._config.api_key
+                if not api_key:
+                    env_map = {
+                        "openai": "OPENAI_API_KEY",
+                        "anthropic": "ANTHROPIC_API_KEY",
+                        "gemini": "GOOGLE_API_KEY",
+                    }
+                    env_var = env_map.get(self._config.provider)
+                    if env_var:
+                        api_key = os.environ.get(env_var)
+                if api_key:
+                    kwargs["api_key"] = api_key
                 if self._config.model:
                     kwargs["model"] = self._config.model
                 if self._config.api_base:

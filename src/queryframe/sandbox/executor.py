@@ -66,12 +66,17 @@ def execute_safe(
         "np": np,
         "math": __import__("math"),
         "datetime": __import__("datetime"),
+        "time": __import__("time"),
         "collections": __import__("collections"),
         "itertools": __import__("itertools"),
         "functools": __import__("functools"),
         "operator": __import__("operator"),
         "re": __import__("re"),
         "statistics": __import__("statistics"),
+        "decimal": __import__("decimal"),
+        "fractions": __import__("fractions"),
+        "random": __import__("random"),
+        "string": __import__("string"),
     }
 
     def _safe_import(name: str, *args: Any, **kwargs: Any) -> Any:

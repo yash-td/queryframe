@@ -45,12 +45,17 @@ ALLOWED_IMPORTS: frozenset[str] = frozenset({
     "np",
     "math",
     "datetime",
+    "time",
     "collections",
     "itertools",
     "functools",
     "operator",
     "re",
     "statistics",
+    "decimal",
+    "fractions",
+    "random",
+    "string",
 })
 
 # These attribute names are forbidden (dunder access)
