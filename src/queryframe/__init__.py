@@ -5,7 +5,7 @@ from queryframe.core.config import QueryFrameConfig
 from queryframe.core.engine import QueryEngine
 from queryframe.core.result import QueryResult
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __all__ = [
     "QueryEngine",
     "QueryFrameConfig",

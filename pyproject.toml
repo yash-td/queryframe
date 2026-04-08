@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "queryframe"
-version = "0.1.0"
+version = "0.1.1"
 description = "Super fast natural language data visualization and analysis for pandas DataFrames"
 readme = "README.md"
 license = "MIT"
