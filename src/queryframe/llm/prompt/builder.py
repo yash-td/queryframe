@@ -35,6 +35,7 @@ class ParsedResponse:
     y_col: str | None
     title: str | None
     explanation: str
+    style: dict[str, Any] | None = None
 
 
 # Keywords that suggest a visualization request
@@ -129,4 +130,5 @@ def _from_dict(data: dict[str, Any]) -> ParsedResponse:
         y_col=data.get("y_col"),
         title=data.get("title"),
         explanation=data.get("explanation", ""),
+        style=data.get("style"),
     )

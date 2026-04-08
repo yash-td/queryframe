@@ -117,13 +117,14 @@ class QueryEngine:
         )
 
         # If re-rendering with different viz, reuse previous code
+        style: dict[str, Any] | None = None
         if _previous_code is not None:
             code = _previous_code
             chart_type = _previous_chart_type
             explanation = "Re-rendered with different visualization library."
         else:
             # Call LLM with retry
-            code, chart_type, explanation = self._call_llm_with_retry(
+            code, chart_type, explanation, style = self._call_llm_with_retry(
                 df, system_prompt, user_prompt, query
             )
 
@@ -156,6 +157,7 @@ class QueryEngine:
                 chart_type=chart_type,
                 variables=exec_result.variables,
                 viz_mode=viz_mode,
+                style=style,
             )
 
         # Store in conversation memory
@@ -187,7 +189,7 @@ class QueryEngine:
         system_prompt: str,
         user_prompt: str,
         query: str,
-    ) -> tuple[str, str | None, str]:
+    ) -> tuple[str, str | None, str, dict[str, Any] | None]:
         """Call the LLM and retry on execution failures."""
         last_error: str | None = None
 
@@ -217,7 +219,7 @@ class QueryEngine:
                     )
                     continue
 
-                return parsed.code, parsed.chart_type, parsed.explanation
+                return parsed.code, parsed.chart_type, parsed.explanation, parsed.style
 
             except LLMError:
                 raise
@@ -226,7 +228,7 @@ class QueryEngine:
                 continue
 
         # Return the last code even if it failed, let the caller handle the error
-        return parsed.code, parsed.chart_type, parsed.explanation
+        return parsed.code, parsed.chart_type, parsed.explanation, parsed.style
 
     def _render_chart(
         self,
@@ -234,6 +236,7 @@ class QueryEngine:
         chart_type: str,
         variables: dict[str, Any],
         viz_mode: str,
+        style: dict[str, Any] | None = None,
     ) -> Any:
         """Render a chart using the appropriate visualization library."""
         try:
@@ -246,6 +249,7 @@ class QueryEngine:
                 y_col=variables.get("y_col"),
                 title=variables.get("title"),
                 viz_mode=viz_mode,
+                style=style,
             )
         except ImportError:
             logger.warning("No visualization library available. Install plotly, matplotlib, or altair.")

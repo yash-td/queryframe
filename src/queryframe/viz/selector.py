@@ -86,6 +86,7 @@ def select_and_render(
     y_col: str | None = None,
     title: str | None = None,
     viz_mode: str = "auto",
+    style: dict[str, Any] | None = None,
     **kwargs: Any,
 ) -> Any:
     """Select the best renderer and render a chart.
@@ -97,6 +98,7 @@ def select_and_render(
         y_col: Y-axis column name
         title: Chart title
         viz_mode: "auto", "plotly", "matplotlib", or "altair"
+        style: Raw style dict from LLM (colors, theme, orientation, etc.)
 
     Returns:
         A figure object (Plotly, Matplotlib, or Altair) or None
@@ -121,5 +123,6 @@ def select_and_render(
         x_col=x_col,
         y_col=y_col,
         title=title,
+        style=style,
         **kwargs,
     )
