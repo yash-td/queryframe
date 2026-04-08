@@ -86,6 +86,77 @@ class TestValidatorRejectsUnsafe:
         result = validate_code("input('enter password')")
         assert not result.is_safe
 
+    def test_reject_vars(self):
+        result = validate_code("result = vars()")
+        assert not result.is_safe
+
+    def test_reject_dir(self):
+        result = validate_code("result = dir(df)")
+        assert not result.is_safe
+
+    def test_reject_setattr_call(self):
+        result = validate_code("setattr(df, 'x', 1)")
+        assert not result.is_safe
+
+    def test_reject_delattr_call(self):
+        result = validate_code("delattr(df, 'x')")
+        assert not result.is_safe
+
+    def test_reject_dunder_reduce(self):
+        result = validate_code("result = df.__reduce__()")
+        assert not result.is_safe
+
+    def test_reject_dunder_globals(self):
+        result = validate_code("result = df.__globals__")
+        assert not result.is_safe
+
+    def test_reject_dunder_code(self):
+        result = validate_code("result = (lambda: 0).__code__")
+        assert not result.is_safe
+
+    def test_reject_star_import_os(self):
+        result = validate_code("from os import *")
+        assert not result.is_safe
+
+    def test_reject_async_function(self):
+        result = validate_code("async def f(): pass")
+        assert not result.is_safe
+
+    def test_reject_await(self):
+        result = validate_code("async def f(): await something()")
+        assert not result.is_safe
+
+    def test_reject_dunder_file(self):
+        result = validate_code("result = pd.__file__")
+        assert not result.is_safe
+
+    def test_reject_dunder_name(self):
+        result = validate_code("result = pd.__name__")
+        assert not result.is_safe
+
+    def test_reject_subscript_dunder(self):
+        """Block dict-style dunder access like obj['__builtins__']."""
+        result = validate_code("result = x['__builtins__']")
+        assert not result.is_safe
+
+    def test_reject_subscript_dunder_import(self):
+        result = validate_code("result = x['__import__']")
+        assert not result.is_safe
+
+    def test_reject_fstring_import(self):
+        """f-string with __import__ call."""
+        result = validate_code("result = f'{__import__(\"os\")}'")
+        assert not result.is_safe
+
+    def test_reject_object_subclasses_chain(self):
+        """Block object traversal attacks."""
+        result = validate_code("result = ().__class__.__bases__[0].__subclasses__()")
+        assert not result.is_safe
+
+    def test_reject_type_subclasses(self):
+        result = validate_code("result = type.__subclasses__(type)")
+        assert not result.is_safe
+
 
 class TestValidatorAllowsSafe:
     """These tests verify that normal pandas/numpy code is allowed."""

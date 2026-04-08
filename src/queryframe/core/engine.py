@@ -14,6 +14,7 @@ from queryframe.core.schema import compress_schema, extract_schema
 from queryframe.llm.base import LLMProvider
 from queryframe.llm.prompt.builder import (
     ConversationTurn,
+    ParsedResponse,
     build_prompt,
     parse_llm_response,
 )
@@ -192,6 +193,10 @@ class QueryEngine:
     ) -> tuple[str, str | None, str, dict[str, Any] | None]:
         """Call the LLM and retry on execution failures."""
         last_error: str | None = None
+        last_parsed = ParsedResponse(
+            code="result = None", chart_type=None, x_col=None, y_col=None,
+            title=None, explanation="All attempts failed.", style=None,
+        )
 
         for attempt in range(1 + self._config.max_retries):
             try:
@@ -203,14 +208,16 @@ class QueryEngine:
                     )
 
                 response = self.provider.generate(prompt=prompt, system=system_prompt)
-                parsed = parse_llm_response(response.content)
+                last_parsed = parse_llm_response(response.content)
 
-                if not parsed.code:
+                if not last_parsed.code:
                     last_error = "LLM returned empty code"
                     continue
 
                 # Try executing to validate
-                exec_result = execute_safe(code=parsed.code, df=df, timeout=self._config.timeout)
+                exec_result = execute_safe(
+                    code=last_parsed.code, df=df, timeout=self._config.timeout
+                )
 
                 if exec_result.error:
                     last_error = exec_result.error
@@ -219,7 +226,10 @@ class QueryEngine:
                     )
                     continue
 
-                return parsed.code, parsed.chart_type, parsed.explanation, parsed.style
+                return (
+                    last_parsed.code, last_parsed.chart_type,
+                    last_parsed.explanation, last_parsed.style,
+                )
 
             except LLMError:
                 raise
@@ -228,7 +238,10 @@ class QueryEngine:
                 continue
 
         # Return the last code even if it failed, let the caller handle the error
-        return parsed.code, parsed.chart_type, parsed.explanation, parsed.style
+        return (
+            last_parsed.code, last_parsed.chart_type,
+            last_parsed.explanation, last_parsed.style,
+        )
 
     def _render_chart(
         self,

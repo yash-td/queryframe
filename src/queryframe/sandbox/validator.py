@@ -96,6 +96,31 @@ class CodeValidator(ast.NodeVisitor):
         self._violations.append("'nonlocal' statement is forbidden")
         self.generic_visit(node)
 
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        self._violations.append("Async function definitions are forbidden")
+        self.generic_visit(node)
+
+    def visit_AsyncFor(self, node: ast.AsyncFor) -> None:
+        self._violations.append("Async for loops are forbidden")
+        self.generic_visit(node)
+
+    def visit_AsyncWith(self, node: ast.AsyncWith) -> None:
+        self._violations.append("Async with statements are forbidden")
+        self.generic_visit(node)
+
+    def visit_Await(self, node: ast.Await) -> None:
+        self._violations.append("Await expressions are forbidden")
+        self.generic_visit(node)
+
+    def visit_Subscript(self, node: ast.Subscript) -> None:
+        # Block dict-style access to dunder attributes: obj["__builtins__"]
+        if isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, str):
+            if node.slice.value.startswith("__") and node.slice.value.endswith("__"):
+                self._violations.append(
+                    f"Forbidden subscript access to dunder: '{node.slice.value}'"
+                )
+        self.generic_visit(node)
+
 
 def validate_code(code: str) -> ValidationResult:
     """Validate code for safe execution. Convenience function."""

@@ -74,6 +74,16 @@ FORBIDDEN_ATTRIBUTES: frozenset[str] = frozenset({
     "__reduce_ex__",
     "__setattr__",
     "__delattr__",
+    "__init_subclass__",
+    "__set_name__",
+    "__loader__",
+    "__spec__",
+    "__file__",
+    "__name__",
+    "__qualname__",
+    "__wrapped__",
+    "__closure__",
+    "__func__",
 })
 
 # These function names are forbidden

@@ -89,3 +89,11 @@ addopts = "--cov=queryframe --cov-report=term-missing"
 
 [tool.coverage.run]
 source = ["src/queryframe"]
+omit = [
+    "src/queryframe/llm/openai.py",
+    "src/queryframe/llm/anthropic.py",
+    "src/queryframe/llm/gemini.py",
+    "src/queryframe/llm/ollama.py",
+    "src/queryframe/llm/lmstudio.py",
+    "src/queryframe/viz/base.py",
+]

@@ -38,3 +38,6 @@ Thumbs.db
 
 # QueryFrame cache
 ~/.queryframe/
+
+# Generated chart files
+chart_*.html
