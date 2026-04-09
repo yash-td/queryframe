@@ -65,7 +65,14 @@ with st.sidebar:
     api_key = None
     if provider in api_key_env:
         env_var = api_key_env[provider]
-        current_key = os.environ.get(env_var, "")
+        # Priority: Streamlit Cloud secrets > env var > user input
+        current_key = ""
+        try:
+            current_key = st.secrets.get(env_var, "")
+        except (FileNotFoundError, Exception):
+            pass
+        if not current_key:
+            current_key = os.environ.get(env_var, "")
         api_key = st.text_input(
             f"{env_var}",
             value=current_key,

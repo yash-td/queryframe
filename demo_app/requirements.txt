@@ -1,2 +1,5 @@
-queryframe[openai,plotly]>=0.1.1
+queryframe[openai,anthropic,gemini,plotly]>=0.1.1
 streamlit>=1.30
+pandas>=2.0
+numpy>=1.24
+plotly>=5.18
